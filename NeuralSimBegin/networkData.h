@@ -10,7 +10,7 @@ public:
 	networkData(std::string netFile);
 	~networkData();
 
-	float** stepNetwork(int stepNum, int* sampleNeurons);
+	float** stepNetwork(int stepNum, std::vector<int> sampleNeurons);
 
 private:
 	int numNodes;

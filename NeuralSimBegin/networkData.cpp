@@ -23,6 +23,7 @@ networkData::networkData(string netFile) {
 		this->biasVec = new float[this->numNodes];
 		for (int i = 0; i < this->numNodes; i++) {
 			inFile >> this->biasVec[i];
+			//cout << "Bias to neuron: " << i << " is: " << this->biasVec[i] << endl;
 		}
 		this->connMatrix = new float* [this->numNodes];
 
@@ -34,6 +35,7 @@ networkData::networkData(string netFile) {
 		for (int i = 0; i < this->numNodes; i++) {
 			for (int j = 0; j < this->numNodes; j++) {
 				inFile >> this->connMatrix[i][j];
+				//cout << "i: " << i << " j: " << j << " Val: " << this->connMatrix[i][j]<<endl;
 			}
 		}
 
@@ -51,8 +53,7 @@ networkData::~networkData() {
 	delete(this->startRate);
 }
 
-float** networkData::stepNetwork(int stepNum, int* sampleNeurons) {
-	vector<int> sample = { 0 };
-	float** sampRates = NNet::stepSys(stepNum,4,this->connMatrix, this->biasVec, this->startRate,sample, 0.2);
+float** networkData::stepNetwork(int stepNum, std::vector<int> sampleNeurons) {
+	float** sampRates = NNet::stepSys(stepNum,4,this->connMatrix, this->biasVec, this->startRate,sampleNeurons, 0.2);
 	return sampRates;
 }

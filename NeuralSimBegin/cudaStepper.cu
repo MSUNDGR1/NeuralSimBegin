@@ -1,5 +1,5 @@
 #include "cudaStepper.cuh"
-
+#include <stdio.h>
 __global__ void stepper(
 	float* d_firingRate,
 	float* d_newFiringRate,
@@ -19,11 +19,12 @@ __global__ void stepper(
 		fireSum += d_firingRate[i] * d_connMatrix[index];
 	}
 	fireSum += d_biasVec[neurNum];
-	float fVal = 1 / (1 + (float)exp((double)(-fireSum)));
+	float fVal = 1 / (1 + exp(-fireSum));
 	fVal -= d_firingRate[neurNum];
 	d_newFiringRate[neurNum] = d_firingRate[neurNum] + (fVal * (*stepSize));
 	index = d_sampleNeuronIndexes[neurNum];
 	if (index > -1) {
+		//printf("firingRate sample: %f\n", d_newFiringRate[neurNum]);
 		d_samples[index] = d_newFiringRate[neurNum];
 	}
 
@@ -93,16 +94,14 @@ namespace NNet {
 		int sizeSample = sizeof(float) * sampleNeurons.size();
 		int sizeUpdate = sizeof(float) * numNeurons;
 		float** sampleRates = new float* [numSteps];
-
+		
 		//Stepping system over input number of steps using stepper cuda kernel.
 		for (int i = 0; i < numSteps; i++) {
 			stepper<<<numNeurons, 1>>>(d_firingRate, d_newFiringRate, d_connMatrix, d_sampleNeuronIndexes,
-				d_biasVec, 
-				d_samples, 
-				d_stepSize, 
-				d_numNeur);
-			sampleRates[i] = new float[sampleNeurons.size()];
-			cudaMemcpy(sampleRates[i], d_samples, sizeSample, cudaMemcpyDeviceToHost);
+				d_biasVec, d_samples, d_stepSize, d_numNeur);
+			float* sampleLayer = new float[sampleNeurons.size()];
+			cudaMemcpy(sampleLayer, d_samples, sizeSample, cudaMemcpyDeviceToHost);
+			sampleRates[i] = sampleLayer;
 			cudaMemcpy(d_firingRate, d_newFiringRate, sizeUpdate, cudaMemcpyDeviceToDevice);
 		}
 		return sampleRates;
