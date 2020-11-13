@@ -1,6 +1,7 @@
 #include "networkData.h"
 #include <cstdlib>
-
+#include "cudaStepper.cuh"
+#include <vector>
 using namespace std;
 
 networkData::networkData(string netFile) {
@@ -50,6 +51,8 @@ networkData::~networkData() {
 	delete(this->startRate);
 }
 
-int** networkData::stepNetwork(int stepNum, int* sampleNeurons) {
-
+float** networkData::stepNetwork(int stepNum, int* sampleNeurons) {
+	vector<int> sample = { 0 };
+	float** sampRates = NNet::stepSys(stepNum,4,this->connMatrix, this->biasVec, this->startRate,sample, 0.2);
+	return sampRates;
 }

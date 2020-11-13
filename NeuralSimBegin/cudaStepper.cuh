@@ -4,14 +4,13 @@
 #include <vector>
 
 namespace NNet {
-	void stepSys(
+	float** stepSys(
 		int numSteps,
 		int numNeurons,
 		float** connMatrix,
 		float* biasVec,
 		float* startRate,
 		std::vector<int> sampleNeurons,
-		float** sampleRates,
 		float stepSize
 	);
 }
