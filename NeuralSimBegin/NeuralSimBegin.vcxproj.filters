@@ -26,5 +26,13 @@
     <ClInclude Include="networkData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="cudaStepper.cuh">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CudaCompile Include="cudaStepper.cu">
+      <Filter>Source Files</Filter>
+    </CudaCompile>
   </ItemGroup>
 </Project>
