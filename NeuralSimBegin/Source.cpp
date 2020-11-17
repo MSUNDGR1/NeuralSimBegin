@@ -1,14 +1,32 @@
 #include "networkData.h"
 #include <vector>
+#include <iostream>
+#include <fstream>
+#include <string>
+
+
+void saveRes(float** data, int numNeurons, int numSteps,float stepSize, std::string fileName) {
+	std::ofstream outFile;
+	outFile.open(fileName);
+	
+
+	outFile << numSteps << "\n";
+	outFile << stepSize << "\n";
+	outFile << numNeurons << "\n";
+
+	for (int i = 0; i < numSteps; i++) {
+		for (int j = 0; j < numNeurons; j++) {
+			outFile << data[i][j] << "\n";
+		}
+	}
+	outFile.close();
+}
 
 int main() {
 
-	networkData net("prob3.txt");
-	std::vector<int> sampleNeurons = { 0,1,2,3 };
-	float** output = net.stepNetwork(25, sampleNeurons);
-	for (int i = 0; i < 25; i++) {
-		std::cout << "Neuron 0: "<<output[i][0] << std::endl;
-		std::cout << "Neuron 1: " << output[i][1] << std::endl;
-		std::cout << "Neuron 2: " << output[i][2] << std::endl;
-	}
+	networkData net("prob4.txt");
+	std::vector<int> sampleNeurons = { 0,1,2,3};
+	float** output = net.stepNetwork(125, 0.2, sampleNeurons);
+	saveRes(output, 4, 125,0.2, "SinBias.txt");
+	return 0;
 }

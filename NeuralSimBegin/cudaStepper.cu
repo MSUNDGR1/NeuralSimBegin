@@ -96,14 +96,33 @@ namespace NNet {
 		float** sampleRates = new float* [numSteps];
 		
 		//Stepping system over input number of steps using stepper cuda kernel.
-		for (int i = 0; i < numSteps; i++) {
+		/*for (int i = 0; i < numSteps; i++) {
 			stepper<<<numNeurons, 1>>>(d_firingRate, d_newFiringRate, d_connMatrix, d_sampleNeuronIndexes,
 				d_biasVec, d_samples, d_stepSize, d_numNeur);
 			float* sampleLayer = new float[sampleNeurons.size()];
 			cudaMemcpy(sampleLayer, d_samples, sizeSample, cudaMemcpyDeviceToHost);
 			sampleRates[i] = sampleLayer;
 			cudaMemcpy(d_firingRate, d_newFiringRate, sizeUpdate, cudaMemcpyDeviceToDevice);
+		}*/
+
+		//stepping system over input number of steps... Sin(t) bias'
+		float time = 0.0;
+		int sizeBias = sizeof(float) * numNeurons;
+		for (int i = 0; i < numSteps; i++) {
+			float sint = sin(time);
+			for (int i = 0; i < numNeurons; i++) {
+				biasVec[i] = sint;
+			}
+			time += stepSize;
+			cudaMemcpy(d_biasVec, biasVec, sizeBias, cudaMemcpyHostToDevice);
+			stepper << <numNeurons, 1 >> > (d_firingRate, d_newFiringRate, d_connMatrix, d_sampleNeuronIndexes,
+				d_biasVec, d_samples, d_stepSize, d_numNeur);
+			float* sampleLayer = new float[sampleNeurons.size()];
+			cudaMemcpy(sampleLayer, d_samples, sizeSample, cudaMemcpyDeviceToHost);
+			sampleRates[i] = sampleLayer;
+			cudaMemcpy(d_firingRate, d_newFiringRate, sizeUpdate, cudaMemcpyDeviceToDevice);
 		}
+
 		return sampleRates;
 	}
 }

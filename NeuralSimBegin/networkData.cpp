@@ -53,7 +53,7 @@ networkData::~networkData() {
 	delete(this->startRate);
 }
 
-float** networkData::stepNetwork(int stepNum, std::vector<int> sampleNeurons) {
-	float** sampRates = NNet::stepSys(stepNum,4,this->connMatrix, this->biasVec, this->startRate,sampleNeurons, 0.2);
+float** networkData::stepNetwork(int stepNum, float stepSize, std::vector<int> sampleNeurons) {
+	float** sampRates = NNet::stepSys(stepNum,4,this->connMatrix, this->biasVec, this->startRate,sampleNeurons, stepSize);
 	return sampRates;
 }
