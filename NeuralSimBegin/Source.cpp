@@ -24,9 +24,9 @@ void saveRes(float** data, int numNeurons, int numSteps,float stepSize, std::str
 
 int main() {
 
-	networkData net("prob3.txt");
+	networkData net("prob4.txt");
 	std::vector<int> sampleNeurons = { 0,1,2,3};
-	float** output = net.stepNetwork(25, 1.0, sampleNeurons);
-	saveRes(output, 4, 25,1.0, "flatBiasStep1.txt");
+	float** output = net.stepNetwork(1250, 0.02, sampleNeurons);
+	saveRes(output, 4, 1250, 0.02, "flatBiasStepSMALL.txt");
 	return 0;
 }

@@ -47,11 +47,15 @@ namespace NNet {
 		for (int i = 0; i < numNeurons; i++) {
 			sampleNeuronFlags[i] = -1;
 		}
+		float* sampleLayer = new float[sampleNeurons.size()];
+		float** sampleRates = new float* [numSteps + 1];
 		int acc = 0;
 		for (int i = 0; i < sampleNeurons.size(); i++) {
 			sampleNeuronFlags[sampleNeurons[i]] = acc;
 			acc++;
+			sampleLayer[i] = startRate[sampleNeurons[i]];
 		}
+		sampleRates[0] = sampleLayer;
 		int size = sizeof(int) * numNeurons;
 		cudaMalloc((void**)&d_sampleNeuronIndexes, size);
 		cudaMemcpy(d_sampleNeuronIndexes, sampleNeuronFlags, size, cudaMemcpyHostToDevice);
@@ -93,21 +97,23 @@ namespace NNet {
 
 		int sizeSample = sizeof(float) * sampleNeurons.size();
 		int sizeUpdate = sizeof(float) * numNeurons;
-		float** sampleRates = new float* [numSteps];
 		
+		
+
 		//Stepping system over input number of steps using stepper cuda kernel.
-		for (int i = 0; i < numSteps; i++) {
+		/*for (int i = 0; i < numSteps; i++) {
 			stepper<<<numNeurons, 1>>>(d_firingRate, d_newFiringRate, d_connMatrix, d_sampleNeuronIndexes,
 				d_biasVec, d_samples, d_stepSize, d_numNeur);
 			float* sampleLayer = new float[sampleNeurons.size()];
 			cudaMemcpy(sampleLayer, d_samples, sizeSample, cudaMemcpyDeviceToHost);
-			sampleRates[i] = sampleLayer;
+			sampleRates[i+1] = sampleLayer;
 			cudaMemcpy(d_firingRate, d_newFiringRate, sizeUpdate, cudaMemcpyDeviceToDevice);
-		}
+		}*/
 
 		//stepping system over input number of steps... Sin(t) bias'
-		/*float time = 0.0;
+		float time = 0.0;
 		int sizeBias = sizeof(float) * numNeurons;
+		
 		for (int i = 0; i < numSteps; i++) {
 			float sint = sin(time);
 			for (int i = 0; i < numNeurons; i++) {
@@ -119,10 +125,10 @@ namespace NNet {
 				d_biasVec, d_samples, d_stepSize, d_numNeur);
 			float* sampleLayer = new float[sampleNeurons.size()];
 			cudaMemcpy(sampleLayer, d_samples, sizeSample, cudaMemcpyDeviceToHost);
-			sampleRates[i] = sampleLayer;
+			sampleRates[i+1] = sampleLayer;
 			cudaMemcpy(d_firingRate, d_newFiringRate, sizeUpdate, cudaMemcpyDeviceToDevice);
-		}*/
-
+		}
+		
 		return sampleRates;
 	}
 }
