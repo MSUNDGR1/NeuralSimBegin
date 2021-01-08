@@ -38,6 +38,13 @@ networkData::networkData(string netFile) {
 				//cout << "i: " << i << " j: " << j << " Val: " << this->connMatrix[i][j]<<endl;
 			}
 		}
+		cout << endl;
+		for (int i = 0; i < this->numNodes; i++) {
+			for (int j = 0; j < this->numNodes; j++) {
+				cout << connMatrix[i][j]<<" ";
+			}
+			cout << endl;
+		}
 
 	}
 	catch (const char* msg) {

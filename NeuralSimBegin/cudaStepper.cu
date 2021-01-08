@@ -117,7 +117,7 @@ namespace NNet {
 		for (int i = 0; i < numSteps; i++) {
 			float sint = sin(time);
 			for (int i = 0; i < numNeurons; i++) {
-				biasVec[i] = sint;
+				biasVec[i] = abs(sint);
 			}
 			time += stepSize;
 			cudaMemcpy(d_biasVec, biasVec, sizeBias, cudaMemcpyHostToDevice);
